@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">My Fridge</string>
+
+	<string name="description_logo">My Fridge</string>
+	<string name="description_home">Home</string>
+	<string name="description_search">Search</string>
+	<string name="description_map">Map</string>
+	<string name="description_refresh">Refresh</string>
+	<string name="description_share">Share</string>
+	<string name="description_export">Export</string>
+	<string name="description_star">Star</string>
+	<string name="description_add">Add</string>
+
+	<string name="title_my_fridge">My Fridge</string>
+	<string name="title_add_items">Add Items</string>
+	<string name="title_add_item">Add Item</string>
+	<string name="title_edit_item">Edit Item</string>
+	<string name="title_added_items">Added Items</string>
+	<string name="title_remove_items">Remove Items</string>
+	<string name="title_expiring_soon">Expiring Soon</string>
+	<string name="title_add_item_confirmation">Confirm Item</string>
+	<string name="title_web_search_results">Search Results</string>
+
+	<string name="dashboard_btn_fridge">My Fridge</string>
+	<string name="dashboard_btn_cooking">Cooking?</string>
+	<string name="dashboard_btn_expiring_soon">Expiring Soon</string>
+
+	<string name="item_name">Item\'s name</string>
+	<string name="use_by_date">Use by date</string>
+	<string name="quantity">Quantity</string>
+	<string name="name">Name</string>
+	<string name="empty_fridge">There are no items\nin your fridge yet!</string>
+	<string name="empty_added_items">You haven\'t added\nany items yet!</string>
+	<string name="my_fridge_logo">MY FRIDGE LOGO</string>
+
+	<string name="search">Search</string>
+	<string name="barcode">Barcode</string>
+	<string name="added_items">Added Items</string>
+	<string name="manual">Manual</string>
+	<string name="edit_item">Edit Item</string>
+	<string name="delete">Delete</string>
+	
+	<string name="productId">Product Id </string>
+	<string name="wrongItem">Wrong Item?</string>
+	<string name="discardItem">Discard Item</string>
+	<string name="addToFridge">Add to fridge</string>
+	<string name="useByDate">Use by date</string>
+	<string name="productDetails">Product details: </string>
+	<string name="productContents">Product Contents</string>
+	<string name="productFormat">Product Format</string>
+
+
+</resources>

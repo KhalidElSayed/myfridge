@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/dashboard_layout"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<LinearLayout
+		style="@style/TitleBar">
+		<TextView
+			style="@style/TitleBarLogo"
+			android:contentDescription="@string/description_logo"
+			android:text="@string/my_fridge_logo"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="@color/title_text"
+			android:clickable="true"
+			android:onClick="onLogoClick" />
+		<!--
+			<ImageView style="@style/TitleBarLogo" android:contentDescription="@string/description_logo"
+			android:src="@drawable/title_logo" />
+		-->
+		<View
+			style="@style/TitleBarSpring" />
+
+		<ImageView
+			style="@style/TitleBarSeparator" />
+
+		<ImageButton
+			style="@style/TitleBarAction"
+			android:id="@+id/btn_title_add"
+			android:contentDescription="@string/description_add"
+			android:src="@drawable/ic_title_add"
+			android:onClick="onAddItemsClick" />
+
+		<ImageView
+			style="@style/TitleBarSeparator" />
+
+		<ImageButton
+			style="@style/TitleBarAction"
+			android:id="@+id/btn_title_refresh"
+			android:contentDescription="@string/description_refresh"
+			android:src="@drawable/ic_title_refresh"
+			android:onClick="onRefreshClick" />
+
+		<ProgressBar
+			style="@style/TitleBarProgressIndicator"
+			android:id="@+id/title_refresh_progress"
+			android:visibility="gone" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		
+		android:layout_weight="1">
+		<Button
+			android:id="@+id/dashboard_btn_fridge"
+			style="@style/DashboardButton"
+			android:onClick="onFridgeClick"
+			android:text="@string/dashboard_btn_fridge"
+			android:drawableTop="@drawable/dashboard_btn_fridge" />
+<!-- 
+		<Button
+			android:id="@+id/dashboard_btn_cooking"
+			style="@style/DashboardButton"
+			android:onClick="onCookingClick"
+			android:text="@string/dashboard_btn_cooking"
+			android:drawableTop="@drawable/dashboard_btn_cooking" />
+			 -->
+		<Button
+			android:id="@+id/dashboard_btn_expiring_soon"
+			style="@style/DashboardButton"
+			android:onClick="onExpiringSoonClick"
+			android:text="@string/dashboard_btn_expiring_soon"
+			android:drawableTop="@drawable/dashboard_btn_expiring_soon" />
+	</LinearLayout>
+	
+</LinearLayout>
