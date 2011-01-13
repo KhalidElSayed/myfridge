@@ -27,5 +27,12 @@
     <item type="id" name="fridge_quantity"/>
     <item type="id" name="fridge_name"/>
     
+    <item type="id" name="add_item_title"/>
+    <item type="id" name="btn_add_item_use_by_date"/>
+    <item type="id" name="add_item_quantity"/>
+    <item type="id" name="btn_add_item_accept"/>
+    <item type="id" name="btn_add_item_discard"/>
+    <item type="id" name="add_item_name"/>
+    
 
 </resources>

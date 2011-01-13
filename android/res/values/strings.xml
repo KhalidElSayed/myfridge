@@ -2,6 +2,9 @@
 <resources>
 	<string name="app_name">My Fridge</string>
 
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+
 	<string name="description_logo">My Fridge</string>
 	<string name="description_home">Home</string>
 	<string name="description_search">Search</string>
@@ -49,6 +52,16 @@
 	<string name="productDetails">Product details: </string>
 	<string name="productContents">Product Contents</string>
 	<string name="productFormat">Product Format</string>
-
+	
+	<string name="following_item_added">The following item was added:</string>
+	<string name="like_to_add_more">Would you like to add another item?</string>
+	<string name="item_added_successfully">Your item was added successfully</string>
+	<string name="item_updated_successfully">You item was updated successfully</string>
+	<string name="like_to_discard">Are you sure you want to discard your item?</string>
+	<string name="like_to_discard_changes">Your changes haven\'t been saved. Are you sure you want to discard them?</string>
+	<string name="fields_incomplete">Some of the fields are incomplete</string>
+	<string name="use_by_date_warning">The use by date must be at least equal to today</string>
+	<string name="button_ok">ok</string>
+	<string name="delete_item_confirmation">Are you sure you want to delete this item?</string>
 
 </resources>

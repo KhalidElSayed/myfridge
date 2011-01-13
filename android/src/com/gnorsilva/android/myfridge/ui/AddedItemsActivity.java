@@ -20,5 +20,5 @@ public class AddedItemsActivity extends ListActivity {
 	public void onRefreshClick(View v){
 		
 	}
-	
+
 }

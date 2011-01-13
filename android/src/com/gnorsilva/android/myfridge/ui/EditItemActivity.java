@@ -1,27 +1,34 @@
 package com.gnorsilva.android.myfridge.ui;
 
+import java.util.Calendar;
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.gnorsilva.android.myfridge.R;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeItems;
 
 public class EditItemActivity extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
-	private static final int FIELDS_INCOMPLETE_DIALOG_ID = 2;
+	private static final int FIELDS_INCOMPLETE_DIALOG_ID = 1;
+	private static final int ITEM_UPDATED_DIALOG_ID = 2;
+	private static final int USE_BY_DATE_WARNING_DIALOG_ID = 3;
+	private static final int DISCARD_DIALOG_ID = 4;
 
 	private Button dateButton;
 	private EditText addItemNameText;
@@ -32,20 +39,22 @@ public class EditItemActivity extends Activity {
 	private String useByDate;
 	private Uri uri;
 	
-	private int year;
-    private int month;
-    private int day;
+	private int thisYear;
+    private int thisMonth;
+    private int today;
 	private int selectedYear;
     private int selectedMonth;
     private int selectedDay;
 
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		setContentView(R.layout.activity_edit_item);
+		setContentView(R.layout.activity_add_item);
+		
+		((TextView) findViewById(R.id.add_item_title)).setText(R.string.edit_item);
 
-		dateButton = (Button) findViewById(R.id.btn_edit_item_use_by_date);
-		addItemNameText = (EditText) findViewById(R.id.edit_item_name);
-		quantityText = (EditText) findViewById(R.id.edit_item_quantity);
+		dateButton = (Button) findViewById(R.id.btn_add_item_use_by_date);
+		addItemNameText = (EditText) findViewById(R.id.add_item_name);
+		quantityText = (EditText) findViewById(R.id.add_item_quantity);
 		
 		uri = (Uri) getIntent().getParcelableExtra("uri");
 		Cursor cursor = managedQuery(uri, null, null, null,null);
@@ -60,11 +69,13 @@ public class EditItemActivity extends Activity {
 		quantityText.setText("" + quantity);
 		
 		String [] dates = useByDate.split("/");
-		selectedYear = year = Integer.parseInt(dates[0]);
-		selectedMonth = month = Integer.parseInt(dates[1]) - 1;
-		selectedDay = day = Integer.parseInt(dates[2]);
+		selectedYear = Integer.parseInt(dates[0]);
+		selectedMonth = Integer.parseInt(dates[1]) - 1;
+		selectedDay = Integer.parseInt(dates[2]);
 		
 		dateButton.setText(useByDate);
+		
+		setTodaysDate();
 	}
 	
 	public void onHomeClick(View v){
@@ -84,9 +95,13 @@ public class EditItemActivity extends Activity {
 		String productDetails = addItemNameText.getText().toString();
 		String date = selectedYear + "/" + ( selectedMonth+1 ) + "/" + selectedDay;
 		
-		if (TextUtils.isEmpty(quantityString) | TextUtils.isEmpty(productDetails)) {
+		if (TextUtils.isEmpty(quantityString) | TextUtils.isEmpty(productDetails) ){
 			showDialog(FIELDS_INCOMPLETE_DIALOG_ID);
-			Log.e("MyFridge", "One or more fields were null");
+			return;
+		}
+		
+		if(selectedDateIsBeforeToday()){
+			showDialog(USE_BY_DATE_WARNING_DIALOG_ID);
 			return;
 		}
 		
@@ -94,7 +109,8 @@ public class EditItemActivity extends Activity {
 		ContentResolver contentResolver = getContentResolver();
 		ContentValues values = new ContentValues();
 		
-		//TODO find a way to take into account the total numbers of items added historically
+		//TODO take into account the total numbers of items added historically
+		//---need to check for item's name in the added database, then add quantity to total_quantity
 		
 		values.put(FridgeItems.NAME, productDetails);
 		values.put(FridgeItems.QUANTITY, quantity);
@@ -102,20 +118,113 @@ public class EditItemActivity extends Activity {
 		
 		contentResolver.update(uri, values,null,null);
 		
-		//TODO show successful update confirmation dialog
-		//TODO return user to activity where he came from
+		showDialog(ITEM_UPDATED_DIALOG_ID);
+	}
+	
+	public void onDiscardClick(View v){
+		showDialog(DISCARD_DIALOG_ID);
+	}
+	
+	private boolean selectedDateIsBeforeToday(){
+		if(selectedYear < thisYear){
+			return true;
+		}else if(selectedMonth < thisMonth){
+			return true;
+		}else if(selectedDay < today){
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case DATE_DIALOG_ID:
-			return new DatePickerDialog(this, onDateSetListener, year, month, day);
+			return new DatePickerDialog(this, onDateSetListener, selectedYear, selectedMonth, selectedDay);
+		case ITEM_UPDATED_DIALOG_ID:
+			return getItemUpdatedDialog();
 		case FIELDS_INCOMPLETE_DIALOG_ID:
-			// TODO implement "FIELDS_INCOMPLETE" Dialog
-			return null;
+			return getFieldsIncompleteDialog();
+		case USE_BY_DATE_WARNING_DIALOG_ID:
+			return getUseByDateWarningDialog();
+		case DISCARD_DIALOG_ID:
+			return getDiscardDialog();
 		}
 		return null;
+	}
+	
+	private Dialog getItemUpdatedDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String message = getResources().getString(R.string.item_updated_successfully); 
+		String buttonText = getResources().getString(R.string.button_ok); 
+		
+		builder.setMessage(message)
+		       .setCancelable(false)
+		       .setNeutralButton(buttonText, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                EditItemActivity.this.finish();
+		           }
+		       });
+		
+		return builder.create();
+	}
+
+	private Dialog getFieldsIncompleteDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String message = getResources().getString(R.string.fields_incomplete); 
+		String buttonText = getResources().getString(R.string.button_ok); 
+		
+		builder.setMessage(message)
+		       .setCancelable(false)
+		       .setNeutralButton(buttonText, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		
+		return builder.create();
+	}
+	
+	private Dialog getUseByDateWarningDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String message = getResources().getString(R.string.use_by_date_warning); 
+		String buttonText = getResources().getString(R.string.button_ok); 
+		
+		builder.setMessage(message)
+		       .setCancelable(false)
+		       .setNeutralButton(buttonText, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		
+		return builder.create();
+	}
+	
+	private Dialog getDiscardDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setMessage(getResources().getString(R.string.like_to_discard_changes))
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   EditItemActivity.this.finish();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+
+		return builder.create();
+	}
+	
+	private void setTodaysDate() {
+		final Calendar c = Calendar.getInstance();
+        thisYear = c.get(Calendar.YEAR);
+        thisMonth = c.get(Calendar.MONTH);
+        today = c.get(Calendar.DAY_OF_MONTH);
 	}
 	
 	private OnDateSetListener onDateSetListener = new OnDateSetListener() {

@@ -9,6 +9,7 @@ import android.view.View.OnClickListener;
 import com.android.custom.quickactions.ActionItem;
 import com.android.custom.quickactions.QuickAction;
 import com.gnorsilva.android.myfridge.R;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract;
 import com.gnorsilva.android.myfridge.ui.EditItemActivity;
 
 public class EditItemsQA {
@@ -23,7 +24,7 @@ public class EditItemsQA {
 			@Override
 			public void onClick(View v) {
 				qa.dismiss();
-				activity.getContentResolver().delete(uri, null, null);
+				activity.showDialog(MyFridgeContract.DELETE_CONFIRMATION_DIALOG_ID);
 			}
 		};
 	}

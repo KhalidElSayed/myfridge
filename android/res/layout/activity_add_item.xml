@@ -19,6 +19,7 @@
 
 		<TextView
 			style="@style/TitleBarText"
+			android:id="@id/add_item_title"
 			android:text="@string/title_add_item" />
 
 		<ImageView
@@ -26,7 +27,7 @@
 
 		<ImageButton
 			style="@style/TitleBarAction"
-			android:id="@+id/btn_title_refresh"
+			android:id="@+id/add_item_btn_title_refresh"
 			android:contentDescription="@string/description_refresh"
 			android:src="@drawable/ic_title_refresh"
 			android:onClick="onRefreshClick" />
@@ -49,31 +50,43 @@
 			android:layout_centerInParent="true">
 
 			<EditText
-				android:id="@+id/add_item_name"
+				android:id="@id/add_item_name"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:hint="@string/item_name" />
 
 			<Button
-				android:id="@+id/btn_add_item_use_by_date"
+				android:id="@id/btn_add_item_use_by_date"
 				android:layout_height="wrap_content"
 				android:layout_width="fill_parent"
 				android:text="@string/use_by_date"
 				android:onClick="onUseByDateClick" />
 
 			<EditText
-				android:id="@+id/add_item_quantity"
+				android:id="@id/add_item_quantity"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:inputType="number"
 				android:hint="@string/quantity" />
 
-			<Button
-				android:id="@+id/btn_add_item_accept"
-				style="@style/DashboardButton"
-				android:onClick="onAcceptClick"
-				android:drawableTop="@drawable/button_ok" />
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true">
 
+				<Button
+					android:id="@id/btn_add_item_accept"
+					style="@style/DashboardButton"
+					android:onClick="onAcceptClick"
+					android:drawableTop="@drawable/button_ok" />
+
+				<Button
+					android:id="@id/btn_add_item_discard"
+					style="@style/DashboardButton"
+					android:onClick="onDiscardClick"
+					android:drawableTop="@drawable/button_cancel" />
+			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
 </LinearLayout>
