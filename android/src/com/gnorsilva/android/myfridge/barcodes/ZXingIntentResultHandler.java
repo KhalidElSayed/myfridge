@@ -7,7 +7,7 @@ import com.gnorsilva.android.myfridge.ui.WebSearchResultsActivity;
 import com.gnorsilva.android.myfridge.utils.ZXingIntentIntegrator;
 import com.gnorsilva.android.myfridge.utils.ZXingIntentResult;
 
-public class ZXingIntentHandler {
+public class ZXingIntentResultHandler {
 
 	public void webSearch(int requestCode, int resultCode, Intent intent, Activity activity) {
 		ZXingIntentResult barcodeScan = ZXingIntentIntegrator.parseActivityResult(requestCode, resultCode, intent);

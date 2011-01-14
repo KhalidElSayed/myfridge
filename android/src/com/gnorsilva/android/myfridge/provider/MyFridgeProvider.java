@@ -14,21 +14,26 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeColumns;
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeItems;
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeName;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.History;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.HistoryColumns;
 import com.gnorsilva.android.myfridge.provider.MyFridgeDatabase.Tables;
 
 public class MyFridgeProvider extends ContentProvider {
 
 	private MyFridgeDatabase dbHelper;
-	private static HashMap<String, String> fridgeItemsProjectionMap = buildFridgeItemsProjectionMap();
+	private static HashMap<String, String> fridgeProjectionMap = buildFridgeProjectionMap();
+	private static HashMap<String, String> historyProjectionMap = buildHistoryProjectionMap();
 	private static final UriMatcher uriMatcher = buildUriMatcher();
 
 	private static final int FRIDGE_ITEMS = 100;
 	private static final int FRIDGE_ITEMS_ID = 101;
 	private static final int FRIDGE_NAME = 102;
 	
+	private static final int HISTORY_ITEMS = 200;
+	private static final int HISTORY_ITEMS_ID = 201;
+	private static final int HISTORY_NAME = 202;
 	
 	private static UriMatcher buildUriMatcher() {
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -37,11 +42,14 @@ public class MyFridgeProvider extends ContentProvider {
         matcher.addURI(authority, "fridge/items", FRIDGE_ITEMS);
         matcher.addURI(authority, "fridge/items/#", FRIDGE_ITEMS_ID);
         matcher.addURI(authority, "fridge/name/*", FRIDGE_NAME);
+        matcher.addURI(authority, "history/items", HISTORY_ITEMS);
+        matcher.addURI(authority, "history/items/#", HISTORY_ITEMS_ID);
+        matcher.addURI(authority, "history/name/*", HISTORY_NAME);
         
 		return matcher;
 	}
 	
-	private static HashMap<String, String> buildFridgeItemsProjectionMap() {
+	private static HashMap<String, String> buildFridgeProjectionMap() {
 		HashMap<String,String> map = new HashMap<String, String>();
 		map.put(BaseColumns._ID, BaseColumns._ID);
 		map.put(FridgeColumns.NAME, FridgeColumns.NAME);
@@ -49,6 +57,17 @@ public class MyFridgeProvider extends ContentProvider {
 		map.put(FridgeColumns.USE_BY_DATE, FridgeColumns.USE_BY_DATE);
 		map.put(FridgeColumns.BARCODE, FridgeColumns.BARCODE);
 		map.put(FridgeColumns.BARCODE_FORMAT, FridgeColumns.BARCODE_FORMAT);
+		return map;
+	}
+	
+	private static HashMap<String,String> buildHistoryProjectionMap(){
+		HashMap<String,String> map = new HashMap<String, String>();
+		map.put(BaseColumns._ID, BaseColumns._ID);
+		map.put(HistoryColumns.NAME, HistoryColumns.NAME);
+		map.put(HistoryColumns.TIMES_ADDED, HistoryColumns.TIMES_ADDED);
+		map.put(HistoryColumns.TOTAL_QUANTITY, HistoryColumns.TOTAL_QUANTITY);
+		map.put(HistoryColumns.BARCODE, HistoryColumns.BARCODE);
+		map.put(HistoryColumns.BARCODE_FORMAT, HistoryColumns.BARCODE_FORMAT);
 		return map;
 	}
 	
@@ -62,11 +81,13 @@ public class MyFridgeProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
 		case FRIDGE_ITEMS:
-			return FridgeItems.CONTENT_TYPE;
-		case FRIDGE_ITEMS_ID:
-			return FridgeItems.CONTENT_ITEM_TYPE;
-		case FRIDGE_NAME:
-			return FridgeName.CONTENT_ITEM_TYPE;
+			return Fridge.CONTENT_TYPE;
+		case FRIDGE_ITEMS_ID | FRIDGE_NAME:
+			return Fridge.CONTENT_ITEM_TYPE;
+		case HISTORY_ITEMS:
+			return History.CONTENT_TYPE;
+		case HISTORY_ITEMS_ID:
+			return History.CONTENT_ITEM_TYPE;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -80,18 +101,38 @@ public class MyFridgeProvider extends ContentProvider {
 		switch (uriMatch) {
 		case FRIDGE_ITEMS:
 			qb.setTables(Tables.FRIDGE);
-			qb.setProjectionMap(fridgeItemsProjectionMap);
+			qb.setProjectionMap(fridgeProjectionMap);
 			break;
+			
 		case FRIDGE_ITEMS_ID:
 			qb.setTables(Tables.FRIDGE);
-			qb.setProjectionMap(fridgeItemsProjectionMap);
+			qb.setProjectionMap(fridgeProjectionMap);
 			qb.appendWhere(BaseColumns._ID + "=" + uri.getPathSegments().get(2));
 			break;
+			
 		case FRIDGE_NAME:
 			qb.setTables(Tables.FRIDGE);
-			qb.setProjectionMap(fridgeItemsProjectionMap);
-			qb.appendWhere(FridgeName.NAME + "='" + uri.getPathSegments().get(2) + "'");
+			qb.setProjectionMap(fridgeProjectionMap);
+			qb.appendWhere(Fridge.NAME + "='" + uri.getPathSegments().get(2) + "'");
 			break;
+			
+		case HISTORY_ITEMS:
+			qb.setTables(Tables.HISTORY);
+			qb.setProjectionMap(historyProjectionMap);
+			break;
+			
+		case HISTORY_ITEMS_ID:
+			qb.setTables(Tables.HISTORY);
+			qb.setProjectionMap(historyProjectionMap);
+			qb.appendWhere(BaseColumns._ID + "=" + uri.getPathSegments().get(2));
+			break;
+			
+		case HISTORY_NAME:
+			qb.setTables(Tables.HISTORY);
+			qb.setProjectionMap(historyProjectionMap);
+			qb.appendWhere(History.NAME + "='" + uri.getPathSegments().get(2) + "'");
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -99,12 +140,14 @@ public class MyFridgeProvider extends ContentProvider {
 		String orderBy = "";
 		if (TextUtils.isEmpty(sortOrder)) {
 			switch(uriMatch){
-			case FRIDGE_ITEMS | FRIDGE_ITEMS_ID:
-				orderBy = FridgeItems.DEFAULT_SORT;
+			case FRIDGE_ITEMS | FRIDGE_ITEMS_ID | FRIDGE_NAME:
+				orderBy = Fridge.DEFAULT_SORT;
 				break;
-			case FRIDGE_NAME:
-				orderBy = FridgeName.DEFAULT_SORT;
+				
+			case HISTORY_ITEMS | HISTORY_ITEMS_ID | HISTORY_NAME:
+				orderBy = History.DEFAULT_SORT;
 				break;
+				
 			}
 		} else {
 			orderBy = sortOrder;
@@ -124,15 +167,20 @@ public class MyFridgeProvider extends ContentProvider {
 
 		String tableName;
 		Uri contentUri;
-
+		
 		switch (uriMatcher.match(uri)) {
 		case FRIDGE_ITEMS:
 			tableName = Tables.FRIDGE;
-			contentUri = FridgeItems.CONTENT_URI;
-			if (necessaryValuesMissing(values, FridgeColumns.notNullValues)) {
-				throw new IllegalArgumentException("some of the values passed were not set correctly");
-			}
+			contentUri = Fridge.CONTENT_URI_ITEMS;
+			checkValues(values, FridgeColumns.notNullValues); 
 			break;
+			
+		case HISTORY_ITEMS:
+			tableName = Tables.HISTORY;
+			contentUri = History.CONTENT_URI_ITEMS;
+			checkValues(values, HistoryColumns.notNullValues);
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -155,24 +203,25 @@ public class MyFridgeProvider extends ContentProvider {
 			throw new IllegalArgumentException("values passed were null");
 		}
 
+		String itemID;
+		String where;
 		int count;
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		switch (uriMatcher.match(uri)) {
-		case FRIDGE_ITEMS:
-			if (necessaryValuesMissing(values, FridgeColumns.notNullValues)) {
-				throw new IllegalArgumentException("some of the values passed were not set correctly");
-			}
-			count = db.update(Tables.FRIDGE, values, selection, selectionArgs);
-			break;
 		case FRIDGE_ITEMS_ID:
-			if (necessaryValuesMissing(values, FridgeColumns.notNullValues)) {
-				throw new IllegalArgumentException("some of the values passed were not set correctly");
-			}
-			String itemID = uri.getPathSegments().get(2);
-			String where = TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ')';
+			checkValues(values, FridgeColumns.notNullValues);
+			itemID = uri.getPathSegments().get(2);
+			where = TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ')';
 			count = db.update(Tables.FRIDGE, values, BaseColumns._ID + "=" + itemID + where, selectionArgs);
 			break;
+
+		case HISTORY_ITEMS_ID:
+			itemID = uri.getPathSegments().get(2);
+			where = TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ')';
+			count = db.update(Tables.HISTORY, values, BaseColumns._ID + "=" + itemID + where, selectionArgs);
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -183,6 +232,8 @@ public class MyFridgeProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		String itemID;
+		String where;
 		int count;
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -190,11 +241,23 @@ public class MyFridgeProvider extends ContentProvider {
 		case FRIDGE_ITEMS:
 			count = db.delete(Tables.FRIDGE, selection, selectionArgs);
 			break;
+			
 		case FRIDGE_ITEMS_ID:
-			String itemID = uri.getPathSegments().get(2);
-			String where = TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ')';
+			itemID = uri.getPathSegments().get(2);
+			where = TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ')';
 			count = db.delete(Tables.FRIDGE, BaseColumns._ID + "=" + itemID + where, selectionArgs);
 			break;
+			
+		case HISTORY_ITEMS:
+			count = db.delete(Tables.HISTORY, selection, selectionArgs);
+			break;
+			
+		case HISTORY_ITEMS_ID:
+			itemID = uri.getPathSegments().get(2);
+			where = TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ')';
+			count = db.delete(Tables.HISTORY, BaseColumns._ID + "=" + itemID + where, selectionArgs);
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -203,10 +266,10 @@ public class MyFridgeProvider extends ContentProvider {
 		return count;
 	}
 	
-	private boolean necessaryValuesMissing(ContentValues values, String [] notNullValues){
+	private boolean checkValues(ContentValues values, String [] notNullValues){
 		for(String s : notNullValues){
 			if(!values.containsKey(s)){
-				return true;
+				throw new IllegalArgumentException("some of the values passed were not set correctly");
 			}
 		}
 		return false;

@@ -11,8 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.gnorsilva.android.myfridge.Item;
-import com.gnorsilva.android.myfridge.barcodes.WebSearch;
 import com.gnorsilva.android.myfridge.R;
+import com.gnorsilva.android.myfridge.barcodes.WebSearch;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
 
 
 public class WebSearchResultsActivity extends ListActivity {
@@ -42,8 +43,14 @@ public class WebSearchResultsActivity extends ListActivity {
 	}
 	
 	public void onListItemClick(ListView parent, View v, int position, long id) {
+		Intent intent = new Intent(Intent.ACTION_INSERT);
+		intent.setType(Fridge.CONTENT_ITEM_TYPE);
+		
+//		TextView textView = (TextView) v.findViewById(R.id.search_results_name);
+//		String itemName = (String) textView.getText();
+//		intent.putExtra(Fridge.NAME,itemName);
+		
 		choosenItem = searchResultItems[position];
-		Intent intent = new Intent(this, AddItemActivity.class);
 		intent.putExtra("SelectedItem", choosenItem);
 		startActivity(intent);
 	}

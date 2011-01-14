@@ -13,15 +13,15 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.gnorsilva.android.myfridge.R;
-import com.gnorsilva.android.myfridge.barcodes.ZXingIntentHandler;
+import com.gnorsilva.android.myfridge.barcodes.ZXingIntentResultHandler;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract;
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeItems;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
 import com.gnorsilva.android.myfridge.quickactions.AddItemsQA;
 import com.gnorsilva.android.myfridge.quickactions.EditItemsQA;
 
 public class MyFridgeActivity extends ListActivity{
-	private AddItemsQA addItemsQA;
-	private Uri selectedItemUri;
+	AddItemsQA addItemsQA;
+	Uri selectedItemUri;
 	
 	// TODO provide sorting mechanism
 
@@ -31,10 +31,10 @@ public class MyFridgeActivity extends ListActivity{
 		
 		addItemsQA = new AddItemsQA(this);
 
-		Cursor cursor = managedQuery(FridgeItems.CONTENT_URI, null, null, null, null);
+		Cursor cursor = managedQuery(Fridge.CONTENT_URI_ITEMS, null, null, null, null);
 		
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.activity_my_fridge_contents, cursor,
-				new String[] { FridgeItems.USE_BY_DATE, FridgeItems.QUANTITY, FridgeItems.NAME  },
+				new String[] { Fridge.USE_BY_DATE, Fridge.QUANTITY, Fridge.NAME  },
 				new int[] { R.id.fridge_usebydate, R.id.fridge_quantity, R.id.fridge_name });
         
         setListAdapter(adapter);
@@ -51,11 +51,11 @@ public class MyFridgeActivity extends ListActivity{
     }
     
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		new ZXingIntentHandler().webSearch(requestCode, resultCode, intent, this);
+		new ZXingIntentResultHandler().webSearch(requestCode, resultCode, intent, this);
 	}
 	
 	protected void onListItemClick(ListView l, View v, int position, long id){
-		selectedItemUri = FridgeItems.CONTENT_URI.buildUpon().appendPath(Long.toString(id)).build();
+		selectedItemUri = Fridge.CONTENT_URI_ITEMS.buildUpon().appendPath(Long.toString(id)).build();
 		new EditItemsQA(this,selectedItemUri).show(v);
 	}
 	
@@ -70,16 +70,18 @@ public class MyFridgeActivity extends ListActivity{
 
 	private Dialog getDeleteConfirmationDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
+		String yes = getResources().getString(R.string.yes);
+		String no = getResources().getString(R.string.no);
+		
 		builder.setMessage(getResources().getString(R.string.delete_item_confirmation))
 		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		       .setPositiveButton(yes, new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   Uri uri = MyFridgeActivity.this.selectedItemUri;
 		        	   MyFridgeActivity.this.getContentResolver().delete(uri, null, null);
 		           }
 		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		       .setNegativeButton(no, new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		                dialog.cancel();
 		           }

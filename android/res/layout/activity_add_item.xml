@@ -1,90 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	android:orientation="vertical">
 
-	<LinearLayout
-		style="@style/TitleBar">
+	<LinearLayout style="@style/TitleBar">
 
-		<ImageButton
-			style="@style/TitleBarAction"
+		<ImageButton style="@style/TitleBarAction"
 			android:contentDescription="@string/description_home"
-			android:src="@drawable/ic_title_home"
-			android:onClick="onHomeClick" />
+			android:src="@drawable/ic_title_home" android:onClick="onHomeClick" />
 
-		<ImageView
-			style="@style/TitleBarSeparator" />
+		<ImageView style="@style/TitleBarSeparator" />
 
-		<TextView
-			style="@style/TitleBarText"
-			android:id="@id/add_item_title"
+		<TextView style="@style/TitleBarText" android:id="@id/add_item_title"
 			android:text="@string/title_add_item" />
 
-		<ImageView
-			style="@style/TitleBarSeparator" />
+		<ImageView style="@style/TitleBarSeparator" />
 
-		<ImageButton
-			style="@style/TitleBarAction"
+		<ImageButton style="@style/TitleBarAction"
 			android:id="@+id/add_item_btn_title_refresh"
 			android:contentDescription="@string/description_refresh"
-			android:src="@drawable/ic_title_refresh"
-			android:onClick="onRefreshClick" />
+			android:src="@drawable/ic_title_refresh" android:onClick="onRefreshClick" />
 
-		<ProgressBar
-			style="@style/TitleBarProgressIndicator"
+		<ProgressBar style="@style/TitleBarProgressIndicator"
 			android:id="@+id/title_refresh_progress"
 			android:visibility="gone" />
 
 	</LinearLayout>
 
-	<ScrollView
-		android:layout_width="fill_parent"
+	<ScrollView android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
 
-		<LinearLayout
-			android:orientation="vertical"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+		<LinearLayout android:orientation="vertical"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:layout_centerInParent="true">
 
-			<EditText
-				android:id="@id/add_item_name"
+			<EditText android:id="@id/add_item_name"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:hint="@string/item_name" />
+				android:layout_height="wrap_content" android:hint="@string/item_name" />
 
-			<Button
-				android:id="@id/btn_add_item_use_by_date"
+			<Button android:id="@id/btn_add_item_use_by_date"
 				android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:text="@string/use_by_date"
+				android:layout_width="fill_parent" android:text="@string/use_by_date"
 				android:onClick="onUseByDateClick" />
 
-			<EditText
-				android:id="@id/add_item_quantity"
+			<EditText android:id="@id/add_item_quantity"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:inputType="number"
+				android:layout_height="wrap_content" android:inputType="number"
 				android:hint="@string/quantity" />
 
-			<LinearLayout
-				android:orientation="horizontal"
+			<LinearLayout android:orientation="horizontal"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_centerInParent="true">
 
-				<Button
-					android:id="@id/btn_add_item_accept"
-					style="@style/DashboardButton"
-					android:onClick="onAcceptClick"
+				<Button android:id="@id/btn_add_item_accept"
+					style="@style/DashboardButton" android:onClick="onAcceptClick"
 					android:drawableTop="@drawable/button_ok" />
 
-				<Button
-					android:id="@id/btn_add_item_discard"
-					style="@style/DashboardButton"
-					android:onClick="onDiscardClick"
+				<Button android:id="@id/btn_add_item_discard"
+					style="@style/DashboardButton" android:onClick="onDiscardClick"
 					android:drawableTop="@drawable/button_cancel" />
 			</LinearLayout>
 		</LinearLayout>

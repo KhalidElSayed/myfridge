@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.gnorsilva.android.myfridge.barcodes.ZXingIntentHandler;
-
-import com.gnorsilva.android.myfridge.quickactions.AddItemsQA;
 import com.gnorsilva.android.myfridge.R;
+import com.gnorsilva.android.myfridge.barcodes.ZXingIntentResultHandler;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.History;
+import com.gnorsilva.android.myfridge.quickactions.AddItemsQA;
 
 public class DashboardActivity extends Activity{
 	private AddItemsQA addItemsQA;
@@ -20,15 +21,24 @@ public class DashboardActivity extends Activity{
 	}
 	
 	public void onFridgeClick(View v){
-        startActivity(new Intent(this, MyFridgeActivity.class));
+    	Intent intent = new Intent(Intent.ACTION_VIEW);
+    	intent.setType(Fridge.CONTENT_TYPE);
+    	startActivity(intent);
     }
+	
+	public void onItemHistoryClick(View v) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setType(History.CONTENT_TYPE);
+		startActivity(intent);
+	}
 
     public void onCookingClick(View v) {
     }
     
-    public void onExpiringSoonClick(View v) {
-        startActivity(new Intent(this, ExpiringSoonActivity.class));
+    public void onExpiringSoonClick(View v){
+    	
     }
+    
     
     public void onAddItemsClick(View v){
 		addItemsQA.show(v);
@@ -41,7 +51,7 @@ public class DashboardActivity extends Activity{
     }
     
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		new ZXingIntentHandler().webSearch(requestCode, resultCode, intent, this);
+		new ZXingIntentResultHandler().webSearch(requestCode, resultCode, intent, this);
 	}
     
 }

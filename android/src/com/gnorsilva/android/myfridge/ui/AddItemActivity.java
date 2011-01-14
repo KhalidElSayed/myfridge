@@ -22,8 +22,8 @@ import android.widget.EditText;
 
 import com.gnorsilva.android.myfridge.R;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract;
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeItems;
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeName;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.History;
 
 public class AddItemActivity extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -92,7 +92,7 @@ public class AddItemActivity extends Activity {
 	
 	public void onAcceptClick(View v){
 		quantityString = quantityTextView.getText().toString();
-		itemName = itemNameTextView.getText().toString();
+		itemName = itemNameTextView.getText().toString().trim();
 		
 		if (TextUtils.isEmpty(quantityString) | TextUtils.isEmpty(itemName) | dateButton.getText().equals(dateButtonOriginalText)) {
 			showDialog(FIELDS_INCORRECT_DIALOG_ID);
@@ -107,18 +107,15 @@ public class AddItemActivity extends Activity {
 		String date = selectedYear + "/" + ( selectedMonth+1 ) + "/" + selectedDay;
 		long quantity = Long.parseLong(quantityString);
 		
-		//TODO find a way to take into account the total numbers of items added historically
+		Uri fridgeUri = Fridge.buildNameUri(itemName);
+		Cursor fridgeCursor = managedQuery(fridgeUri, null, null, null, null);
 		
-		Uri uri = FridgeName.buildFridgeNameUri(itemName);
-		
-		Cursor cursor = managedQuery(uri, null, null, null, null);
-		
-		while(cursor.moveToNext()){
-			String testDate = cursor.getString(cursor.getColumnIndex(FridgeName.USE_BY_DATE));
+		while(fridgeCursor.moveToNext()){
+			String testDate = fridgeCursor.getString(fridgeCursor.getColumnIndex(Fridge.USE_BY_DATE));
 			if(testDate.equals(date)){
-				long itemId = cursor.getLong(cursor.getColumnIndex(FridgeName._ID));
-				quantity += cursor.getLong(cursor.getColumnIndex(FridgeName.QUANTITY));
-				uri = FridgeItems.buildFridgeItemUri(itemId);
+				long itemId = fridgeCursor.getLong(fridgeCursor.getColumnIndex(Fridge._ID));
+				quantity += fridgeCursor.getLong(fridgeCursor.getColumnIndex(Fridge.QUANTITY));
+				fridgeUri = Fridge.buildItemUri(itemId);
 				update = true;
 				break;
 			}
@@ -127,26 +124,64 @@ public class AddItemActivity extends Activity {
 		ContentResolver contentResolver = getContentResolver();
 		ContentValues values = new ContentValues();
 		
-		values.put(FridgeItems.NAME, itemName);
-		values.put(FridgeItems.QUANTITY, quantity);
-		values.put(FridgeItems.USE_BY_DATE, date);
+		values.put(Fridge.NAME, itemName);
+		values.put(Fridge.QUANTITY, quantity);
+		values.put(Fridge.USE_BY_DATE, date);
 		
 		if(!TextUtils.isEmpty(barcode)){
-			values.put(FridgeItems.QUANTITY, barcode);
+			values.put(Fridge.BARCODE, barcode);
 		}
 		
 		if(!TextUtils.isEmpty(barcodeFormat)){
-			values.put(FridgeItems.QUANTITY, barcodeFormat);
+			values.put(Fridge.BARCODE_FORMAT, barcodeFormat);
 		}
 		
 		if(update){
-			contentResolver.update(uri, values, null, null);
-			showDialog(ITEM_UPDATED_DIALOG_ID);
+			contentResolver.update(fridgeUri, values, null, null);
 		}else{
-			contentResolver.insert(FridgeItems.CONTENT_URI, values);
-			showDialog(ITEM_ADDED_DIALOG_ID);
+			contentResolver.insert(Fridge.CONTENT_URI_ITEMS, values);
 		}
 		
+		//TODO find a way to take into account the total numbers of items added historically
+		Uri historyUri = History.buildNameUri(itemName);
+		Cursor historyCursor = managedQuery(historyUri, null, null, null, null);
+		ContentValues historyValues = new ContentValues();
+		Uri historyItemUri;
+		
+		if(historyCursor.moveToFirst()){
+			long timesAdded = historyCursor.getLong(historyCursor.getColumnIndex(History.TIMES_ADDED));
+			long totalQuantity = historyCursor.getLong(historyCursor.getColumnIndex(History.TOTAL_QUANTITY));
+			long itemId = historyCursor.getLong(historyCursor.getColumnIndex(History._ID));
+
+			timesAdded ++;
+			totalQuantity += quantity;
+			
+			historyItemUri = History.buildItemUri(itemId);
+			historyValues.put(History.TIMES_ADDED, timesAdded);
+			historyValues.put(History.TOTAL_QUANTITY, totalQuantity);
+			contentResolver.update(historyItemUri, historyValues, null, null);
+		}else{
+			historyValues.put(History.NAME, itemName);
+			historyValues.put(History.TIMES_ADDED, 1L);
+			historyValues.put(History.TOTAL_QUANTITY, quantity);
+			historyItemUri = History.CONTENT_URI_ITEMS;
+			
+			if(!TextUtils.isEmpty(barcode)){
+				values.put(History.BARCODE, barcode);
+			}
+			
+			if(!TextUtils.isEmpty(barcodeFormat)){
+				values.put(History.BARCODE_FORMAT, barcodeFormat);
+			}
+			
+			contentResolver.insert(historyItemUri, historyValues);
+		}
+		
+		if(update){
+			showDialog(ITEM_UPDATED_DIALOG_ID);
+		}else{
+			showDialog(ITEM_ADDED_DIALOG_ID);
+		}
 	}
 	
 	public void onDiscardClick(View v){
@@ -249,7 +284,9 @@ public class AddItemActivity extends Activity {
 		       .setPositiveButton(yes, new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		                AddItemActivity.this.finish();
-		                AddItemActivity.this.startActivity(new Intent(AddItemActivity.this,AddItemActivity.class));
+		                Intent intent = new Intent(Intent.ACTION_INSERT);
+		                intent.setType(Fridge.CONTENT_ITEM_TYPE);
+		                AddItemActivity.this.startActivity(intent);
 		           }
 		       })
 		       .setNegativeButton(no, new DialogInterface.OnClickListener() {

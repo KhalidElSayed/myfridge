@@ -19,7 +19,7 @@
 	<string name="title_add_items">Add Items</string>
 	<string name="title_add_item">Add Item</string>
 	<string name="title_edit_item">Edit Item</string>
-	<string name="title_added_items">Added Items</string>
+	<string name="title_item_history">Item History</string>
 	<string name="title_remove_items">Remove Items</string>
 	<string name="title_expiring_soon">Expiring Soon</string>
 	<string name="title_add_item_confirmation">Confirm Item</string>
@@ -34,12 +34,12 @@
 	<string name="quantity">Quantity</string>
 	<string name="name">Name</string>
 	<string name="empty_fridge">There are no items\nin your fridge yet!</string>
-	<string name="empty_added_items">You haven\'t added\nany items yet!</string>
+	<string name="empty_item_history">You haven\'t added\nany items yet!</string>
 	<string name="my_fridge_logo">MY FRIDGE LOGO</string>
 
 	<string name="search">Search</string>
 	<string name="barcode">Barcode</string>
-	<string name="added_items">Added Items</string>
+	<string name="item_history">Item History</string>
 	<string name="manual">Manual</string>
 	<string name="edit_item">Edit Item</string>
 	<string name="delete">Delete</string>

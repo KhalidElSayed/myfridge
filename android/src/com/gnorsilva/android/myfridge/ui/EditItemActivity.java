@@ -21,7 +21,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gnorsilva.android.myfridge.R;
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeItems;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
 
 public class EditItemActivity extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -61,9 +61,9 @@ public class EditItemActivity extends Activity {
 
 		cursor.moveToFirst();
 		
-		itemName = cursor.getString(cursor.getColumnIndex(FridgeItems.NAME));
-		quantity = cursor.getLong(cursor.getColumnIndex(FridgeItems.QUANTITY));
-		useByDate = cursor.getString(cursor.getColumnIndex(FridgeItems.USE_BY_DATE));
+		itemName = cursor.getString(cursor.getColumnIndex(Fridge.NAME));
+		quantity = cursor.getLong(cursor.getColumnIndex(Fridge.QUANTITY));
+		useByDate = cursor.getString(cursor.getColumnIndex(Fridge.USE_BY_DATE));
 
 		addItemNameText.setText(itemName);
 		quantityText.setText("" + quantity);
@@ -112,9 +112,9 @@ public class EditItemActivity extends Activity {
 		//TODO take into account the total numbers of items added historically
 		//---need to check for item's name in the added database, then add quantity to total_quantity
 		
-		values.put(FridgeItems.NAME, productDetails);
-		values.put(FridgeItems.QUANTITY, quantity);
-		values.put(FridgeItems.USE_BY_DATE, date);
+		values.put(Fridge.NAME, productDetails);
+		values.put(Fridge.QUANTITY, quantity);
+		values.put(Fridge.USE_BY_DATE, date);
 		
 		contentResolver.update(uri, values,null,null);
 		

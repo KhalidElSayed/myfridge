@@ -1,6 +1,6 @@
 package com.gnorsilva.android.myfridge.provider;
 
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract.AddedColumns;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.HistoryColumns;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.FridgeColumns;
 
 import android.content.Context;
@@ -16,7 +16,7 @@ public class MyFridgeDatabase extends SQLiteOpenHelper{
     
     interface Tables{
     	String FRIDGE = "fridge";
-    	String ADDED = "added";
+    	String HISTORY = "history";
     }
     
     public MyFridgeDatabase(Context context) {
@@ -35,13 +35,13 @@ public class MyFridgeDatabase extends SQLiteOpenHelper{
 					FridgeColumns.BARCODE + " TEXT, "+
 					FridgeColumns.BARCODE_FORMAT + " TEXT );");
 		
-		db.execSQL("CREATE TABLE "+ Tables.ADDED +" ( " +
+		db.execSQL("CREATE TABLE "+ Tables.HISTORY +" ( " +
 					BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				 	AddedColumns.NAME + " TEXT NOT NULL,"+
-				 	AddedColumns.TOTAL_ADDED + " TEXT NOT NULL,"+
-				 	AddedColumns.TOTAL_QUANTITY + " INTEGER NOT NULL,"+
-				 	AddedColumns.BARCODE + " TEXT,"+
-				 	AddedColumns.BARCODE_FORMAT + " TEXT );");
+				 	HistoryColumns.NAME + " TEXT NOT NULL,"+
+				 	HistoryColumns.TIMES_ADDED + " TEXT NOT NULL,"+
+				 	HistoryColumns.TOTAL_QUANTITY + " INTEGER NOT NULL,"+
+				 	HistoryColumns.BARCODE + " TEXT,"+
+				 	HistoryColumns.BARCODE_FORMAT + " TEXT );");
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class MyFridgeDatabase extends SQLiteOpenHelper{
 		
 		// TODO find the correct procedure for database update
 		db.execSQL("DROP TABLE IF EXISTS " + Tables.FRIDGE);
-		db.execSQL("DROP TABLE IF EXISTS " + Tables.ADDED);
+		db.execSQL("DROP TABLE IF EXISTS " + Tables.HISTORY);
 
 		onCreate(db);
 	}

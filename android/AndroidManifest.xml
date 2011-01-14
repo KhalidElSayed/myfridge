@@ -1,88 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.gnorsilva.android.myfridge"
-	android:versionCode="1"
-	android:versionName="1.0">
+	android:versionCode="1" android:versionName="1.0">
 
-	<uses-sdk
-		android:minSdkVersion="7" />
+	<uses-sdk android:minSdkVersion="7" />
 
-	<uses-permission
-		android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.INTERNET" />
 
-	<application
-		android:icon="@drawable/icon"
-		android:label="@string/app_name"
-		android:theme="@style/WhatsInMyFridge">
+	<application android:icon="@drawable/icon"
+		android:label="@string/app_name" android:theme="@style/WhatsInMyFridge">
 
-		<activity
-			android:name=".ui.AddedItemsActivity">
+		<provider android:name=".provider.MyFridgeProvider"
+			android:authorities="com.gnorsilva.android.myfridge" />
+
+		<activity android:name=".ui.AddItemActivity">
+			<intent-filter>
+				<action android:name="android.intent.action.INSERT" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.myfridge.fridgeitem" />
+			</intent-filter>
 		</activity>
 
-		<activity
-			android:name=".ui.AddItemActivity">
-		</activity>
-
-		<activity
-			android:name=".ui.DashboardActivity"
+		<activity android:name=".ui.DashboardActivity"
 			android:label="@string/app_name">
 			<intent-filter>
-				<action
-					android:name="android.intent.action.MAIN" />
-				<category
-					android:name="android.intent.category.LAUNCHER" />
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".ui.EditItemActivity">
+			<intent-filter>
+				<action android:name="android.intent.action.EDIT" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.myfridge.fridgeitem" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".ui.ExpiringSoonActivity"
+			android:label="@string/title_expiring_soon">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
 			</intent-filter>
 		</activity>
 		
-		<activity
-			android:name=".ui.EditItemActivity">
-		</activity>
-
-		<activity
-			android:name=".ui.ExpiringSoonActivity"
-			android:label="@string/title_expiring_soon">
+		<activity android:name=".ui.ItemHistoryActivity">
 			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.PICK" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/vnd.myfridge.historyitem" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/vnd.myfridge.historyitem" />
 			</intent-filter>
 		</activity>
-<!--		
-		<activity
-		android:name="FRidgeActivity>
-		<intent-filter>
-		<action android:name="">
-		</action>
-		<data android:mimeType="vnd.android.cursor.item/vnda.myfridge.item" />
-		</intent-filter>
-		</activity>
-	-->	
 
-		<activity
-			android:name=".ui.MyFridgeActivity"
+		<activity android:name=".ui.MyFridgeActivity"
 			android:label="@string/title_my_fridge">
 			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.dir/vnd.myfridge.fridgeitem" />
 			</intent-filter>
 		</activity>
 
-		<activity
-			android:name=".ui.RemoveItemsActivity"
-			android:label="@string/title_remove_items">
+		<activity android:name=".ui.WebSearchResultsActivity">
 			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-
-		<activity
-			android:name=".ui.WebSearchResultsActivity">
-		</activity>
-
-	<provider
-		android:name=".provider.MyFridgeProvider"
-		android:authorities="com.gnorsilva.android.myfridge" />
 
 	</application>
 </manifest> 

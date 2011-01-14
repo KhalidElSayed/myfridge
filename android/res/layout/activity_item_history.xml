@@ -19,7 +19,7 @@
 
 		<TextView
 			style="@style/TitleBarText"
-			android:text="@string/title_added_items" />
+			android:text="@string/title_item_history" />
 
 		<ImageView
 			style="@style/TitleBarSeparator" />

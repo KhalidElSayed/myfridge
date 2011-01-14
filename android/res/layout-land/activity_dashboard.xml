@@ -70,6 +70,13 @@
 			android:text="@string/dashboard_btn_cooking"
 			android:drawableTop="@drawable/dashboard_btn_cooking" />
 			 -->
+ 		<Button
+			android:id="@+id/dashboard_btn_item_history"
+			style="@style/DashboardButton"
+			android:onClick="onItemHistoryClick"
+			android:text="@string/item_history"
+			android:drawableTop="@drawable/dashboard_btn_item_history" />
+			 
 		<Button
 			android:id="@+id/dashboard_btn_expiring_soon"
 			style="@style/DashboardButton"
