@@ -39,10 +39,6 @@ public class MyFridgeContract {
 	public static final Uri FRIDGE_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FRIDGE).build();
 	public static final Uri HISTORY_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_HISTORY).build();
 	
-	public static final String ITEM_NAME = "itemName";
-	public static final String BARCODE = "barcode";
-	public static final String BARCODE_FORMAT = "barcodeFormat";
-	
 	public static final int DELETE_CONFIRMATION_DIALOG_ID = 101010;
 
 	public static class Fridge implements FridgeColumns, BaseColumns {

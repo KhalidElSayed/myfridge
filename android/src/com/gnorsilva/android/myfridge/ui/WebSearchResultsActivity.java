@@ -12,8 +12,8 @@ import android.widget.ListView;
 
 import com.gnorsilva.android.myfridge.Item;
 import com.gnorsilva.android.myfridge.R;
-import com.gnorsilva.android.myfridge.barcodes.WebSearch;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
+import com.gnorsilva.android.myfridge.utils.WebSearch;
 
 
 public class WebSearchResultsActivity extends ListActivity {

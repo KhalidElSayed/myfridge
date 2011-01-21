@@ -1,4 +1,4 @@
-package com.gnorsilva.android.myfridge.barcodes;
+package com.gnorsilva.android.myfridge.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

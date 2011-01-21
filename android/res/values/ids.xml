@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="title_container" />
-    <item type="id" name="title_logo" />
-    <item type="id" name="title_text" />
+	<item type="id" name="title_container" />
+	<item type="id" name="title_logo" />
+	<item type="id" name="title_text" />
 
-    <item type="id" name="dialog_discard_confirm" />
+	<item type="id" name="dialog_discard_confirm" />
 
-    <item type="id" name="dialog_moderator" />
-    <item type="id" name="dialog_wave" />
+	<item type="id" name="dialog_moderator" />
+	<item type="id" name="dialog_wave" />
 
-    <item type="id" name="blocks_ruler" />
-    <item type="id" name="blocks_now" />
-    
-    <item type="id" name="arrow_down" />
-    <item type="id" name="arrow_up" />
-    <item type="id" name="btn1" />
-    <item type="id" name="btn2" />
-    <item type="id" name="footer" />
-    <item type="id" name="header2" />
-    <item type="id" name="icon" />
-    <item type="id" name="scroll" />
-    <item type="id" name="title" />
-    <item type="id" name="tracks" />
-    
-    <item type="id" name="fridge_usebydate"/>
-    <item type="id" name="fridge_quantity"/>
-    <item type="id" name="fridge_name"/>
-    
-    <item type="id" name="add_item_title"/>
-    <item type="id" name="btn_add_item_use_by_date"/>
-    <item type="id" name="add_item_quantity"/>
-    <item type="id" name="btn_add_item_accept"/>
-    <item type="id" name="btn_add_item_discard"/>
-    <item type="id" name="add_item_name"/>
-    
+	<item type="id" name="blocks_ruler" />
+	<item type="id" name="blocks_now" />
+
+	<item type="id" name="arrow_down" />
+	<item type="id" name="arrow_up" />
+	<item type="id" name="btn1" />
+	<item type="id" name="btn2" />
+	<item type="id" name="footer" />
+	<item type="id" name="header2" />
+	<item type="id" name="icon" />
+	<item type="id" name="scroll" />
+	<item type="id" name="title" />
+	<item type="id" name="tracks" />
+
+	<item type="id" name="fridge_item_usebydate" />
+	<item type="id" name="fridge_item_quantity" />
+	<item type="id" name="fridge_item_name" />
+	<item type="id" name="history_item_name" />
+	<item type="id" name="history_item_total_quantity" />
+	<item type="id" name="history_item_times_added" />
+
+	<item type="id" name="add_item_title" />
+	<item type="id" name="btn_add_item_use_by_date" />
+	<item type="id" name="add_item_quantity" />
+	<item type="id" name="btn_add_item_accept" />
+	<item type="id" name="btn_add_item_discard" />
+	<item type="id" name="add_item_name" />
+
 
 </resources>

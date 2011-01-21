@@ -33,7 +33,9 @@
 			<intent-filter>
 				<action android:name="android.intent.action.EDIT" />
 				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="vnd.android.cursor.item/vnd.myfridge.fridgeitem" />
+				<data android:scheme="content"
+					android:host="com.gnorsilva.android.myfridge"
+					 />
 			</intent-filter>
 		</activity>
 
@@ -43,7 +45,7 @@
 				<action android:name="android.intent.action.VIEW" />
 			</intent-filter>
 		</activity>
-		
+
 		<activity android:name=".ui.ItemHistoryActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.PICK" />

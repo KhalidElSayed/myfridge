@@ -11,21 +11,20 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal">
 		<TextView
-			android:id="@id/fridge_quantity"
+			android:id="@id/fridge_item_quantity"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:text="#" />
 		
 		<TextView
-			android:id="@id/fridge_quantity"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:text=" " />
 
 		<TextView
-			android:id="@id/fridge_name"
+			android:id="@id/fridge_item_name"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceLarge"
@@ -39,13 +38,13 @@
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:text="Use By: " />
 		<TextView
-			android:id="@id/fridge_usebydate"
+			android:id="@id/fridge_item_usebydate"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:text=" XXXX/XX/XX" />
 	</LinearLayout>
 </LinearLayout>

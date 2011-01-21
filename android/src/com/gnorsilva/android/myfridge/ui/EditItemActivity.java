@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.gnorsilva.android.myfridge.R;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
+import com.gnorsilva.android.myfridge.provider.MyFridgeContract.History;
 
 public class EditItemActivity extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -29,6 +30,7 @@ public class EditItemActivity extends Activity {
 	private static final int ITEM_UPDATED_DIALOG_ID = 2;
 	private static final int USE_BY_DATE_WARNING_DIALOG_ID = 3;
 	private static final int DISCARD_DIALOG_ID = 4;
+	private static final int QUANTITY_ERROR_DIALOG_ID = 5;
 
 	private Button dateButton;
 	private EditText addItemNameText;
@@ -56,7 +58,7 @@ public class EditItemActivity extends Activity {
 		addItemNameText = (EditText) findViewById(R.id.add_item_name);
 		quantityText = (EditText) findViewById(R.id.add_item_quantity);
 		
-		uri = (Uri) getIntent().getParcelableExtra("uri");
+		uri = (Uri) getIntent().getData();
 		Cursor cursor = managedQuery(uri, null, null, null,null);
 
 		cursor.moveToFirst();
@@ -105,18 +107,45 @@ public class EditItemActivity extends Activity {
 			return;
 		}
 		
+		long originalQuantity = quantity;
 		quantity = Long.parseLong(quantityString);
+		
+		if ( quantity < 1){
+			showDialog(QUANTITY_ERROR_DIALOG_ID);
+			return;
+		}
+		
 		ContentResolver contentResolver = getContentResolver();
 		ContentValues values = new ContentValues();
-		
-		//TODO take into account the total numbers of items added historically
-		//---need to check for item's name in the added database, then add quantity to total_quantity
 		
 		values.put(Fridge.NAME, productDetails);
 		values.put(Fridge.QUANTITY, quantity);
 		values.put(Fridge.USE_BY_DATE, date);
 		
 		contentResolver.update(uri, values,null,null);
+		
+		Uri historyUri = History.buildNameUri(itemName);
+		Cursor historyCursor = managedQuery(historyUri, null, null, null, null);
+		ContentValues historyValues = new ContentValues();
+		Uri historyItemUri;
+		
+		if(historyCursor.moveToFirst()){
+			long totalQuantity = historyCursor.getLong(historyCursor.getColumnIndex(History.TOTAL_QUANTITY));
+			long itemId = historyCursor.getLong(historyCursor.getColumnIndex(History._ID));
+
+			totalQuantity += ( quantity - originalQuantity );
+			
+			historyItemUri = History.buildItemUri(itemId);
+			historyValues.put(History.TOTAL_QUANTITY, totalQuantity);
+			contentResolver.update(historyItemUri, historyValues, null, null);
+		}else{
+			historyValues.put(History.NAME, itemName);
+			historyValues.put(History.TIMES_ADDED, 1L);
+			historyValues.put(History.TOTAL_QUANTITY, quantity);
+			historyItemUri = History.CONTENT_URI_ITEMS;
+			
+			contentResolver.insert(historyItemUri, historyValues);
+		}
 		
 		showDialog(ITEM_UPDATED_DIALOG_ID);
 	}
@@ -149,6 +178,8 @@ public class EditItemActivity extends Activity {
 			return getUseByDateWarningDialog();
 		case DISCARD_DIALOG_ID:
 			return getDiscardDialog();
+		case QUANTITY_ERROR_DIALOG_ID:
+			return getQuantityErrorDialog();
 		}
 		return null;
 	}
@@ -217,6 +248,22 @@ public class EditItemActivity extends Activity {
 		           }
 		       });
 
+		return builder.create();
+	}
+	
+	private Dialog getQuantityErrorDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String message = getResources().getString(R.string.quantity_error_warning); 
+		String buttonText = getResources().getString(R.string.button_ok); 
+		
+		builder.setMessage(message)
+		       .setCancelable(false)
+		       .setNeutralButton(buttonText, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		
 		return builder.create();
 	}
 	

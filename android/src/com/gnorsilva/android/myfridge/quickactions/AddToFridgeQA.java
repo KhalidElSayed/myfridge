@@ -10,9 +10,10 @@ import com.android.custom.quickactions.QuickAction;
 import com.gnorsilva.android.myfridge.R;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.History;
+import com.gnorsilva.android.myfridge.utils.Utils;
 import com.gnorsilva.android.myfridge.utils.ZXingIntentIntegrator;
 
-public class AddItemsQA {
+public class AddToFridgeQA {
 	private ActionItem barcode;
 	private ActionItem itemHistory;
 	private ActionItem manual;
@@ -36,7 +37,7 @@ public class AddItemsQA {
 				qa.dismiss();
 		    	Intent intent = new Intent(Intent.ACTION_PICK);
 		    	intent.setType(History.CONTENT_TYPE);
-		    	activity.startActivity(intent);
+		    	activity.startActivityForResult(intent, Utils.HISTORY_PICK_REQUEST_ID);
 			}
 		};
 	}
@@ -53,7 +54,7 @@ public class AddItemsQA {
 		};
 	}
 	
-	public AddItemsQA(Activity activity){
+	public AddToFridgeQA(Activity activity){
 		this.activity = activity;
 		
 		barcode = new ActionItem();

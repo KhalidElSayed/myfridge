@@ -39,12 +39,25 @@ public class MyFridgeProvider extends ContentProvider {
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MyFridgeContract.CONTENT_AUTHORITY;
 		
-        matcher.addURI(authority, "fridge/items", FRIDGE_ITEMS);
-        matcher.addURI(authority, "fridge/items/#", FRIDGE_ITEMS_ID);
-        matcher.addURI(authority, "fridge/name/*", FRIDGE_NAME);
-        matcher.addURI(authority, "history/items", HISTORY_ITEMS);
-        matcher.addURI(authority, "history/items/#", HISTORY_ITEMS_ID);
-        matcher.addURI(authority, "history/name/*", HISTORY_NAME);
+        String path;
+        
+        path = MyFridgeContract.PATH_FRIDGE + "/" + MyFridgeContract.PATH_ITEMS;
+        matcher.addURI(authority, path, FRIDGE_ITEMS);
+        
+        path = MyFridgeContract.PATH_FRIDGE + "/" + MyFridgeContract.PATH_ITEMS + "/#";
+        matcher.addURI(authority, path, FRIDGE_ITEMS_ID);
+        
+        path = MyFridgeContract.PATH_FRIDGE + "/" + MyFridgeContract.PATH_NAME + "/*";
+        matcher.addURI(authority, path, FRIDGE_NAME);
+        
+        path = MyFridgeContract.PATH_HISTORY + "/" + MyFridgeContract.PATH_ITEMS;
+        matcher.addURI(authority, path, HISTORY_ITEMS);
+        
+        path = MyFridgeContract.PATH_HISTORY + "/" + MyFridgeContract.PATH_ITEMS + "/#";
+        matcher.addURI(authority, path, HISTORY_ITEMS_ID);
+        
+        path = MyFridgeContract.PATH_HISTORY + "/" + MyFridgeContract.PATH_NAME + "/*";
+        matcher.addURI(authority, path, HISTORY_NAME);
         
 		return matcher;
 	}
@@ -140,11 +153,15 @@ public class MyFridgeProvider extends ContentProvider {
 		String orderBy = "";
 		if (TextUtils.isEmpty(sortOrder)) {
 			switch(uriMatch){
-			case FRIDGE_ITEMS | FRIDGE_ITEMS_ID | FRIDGE_NAME:
+			case FRIDGE_ITEMS:
+			case FRIDGE_ITEMS_ID :
+			case FRIDGE_NAME:
 				orderBy = Fridge.DEFAULT_SORT;
 				break;
 				
-			case HISTORY_ITEMS | HISTORY_ITEMS_ID | HISTORY_NAME:
+			case HISTORY_ITEMS :
+			case HISTORY_ITEMS_ID :
+			case HISTORY_NAME:
 				orderBy = History.DEFAULT_SORT;
 				break;
 				

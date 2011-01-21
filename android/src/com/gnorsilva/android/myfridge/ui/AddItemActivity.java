@@ -21,9 +21,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.gnorsilva.android.myfridge.R;
-import com.gnorsilva.android.myfridge.provider.MyFridgeContract;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.Fridge;
 import com.gnorsilva.android.myfridge.provider.MyFridgeContract.History;
+import com.gnorsilva.android.myfridge.utils.Utils;
 
 public class AddItemActivity extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -33,6 +33,7 @@ public class AddItemActivity extends Activity {
 	private static final int ADD_MORE_DIALOG_ID = 4;
 	private static final int DISCARD_DIALOG_ID = 5;
 	private static final int USE_BY_DATE_WARNING_DIALOG_ID = 6;
+	private static final int QUANTITY_ERROR_DIALOG_ID = 7;
 	
 	private Button dateButton;
 	private EditText itemNameTextView;
@@ -51,6 +52,7 @@ public class AddItemActivity extends Activity {
     private int selectedMonth;
     private int selectedDay;
     private boolean update;
+	private boolean goingHome;
 
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -64,22 +66,23 @@ public class AddItemActivity extends Activity {
 		
 		Intent intent = getIntent();
 		
-		if(intent.hasExtra(MyFridgeContract.ITEM_NAME)){
-			itemName = intent.getStringExtra(MyFridgeContract.ITEM_NAME);
+		if(intent.hasExtra(Fridge.NAME)){
+			itemName = intent.getStringExtra(Fridge.NAME);
 			itemNameTextView.setText(itemName);
 		}
 		
-		if(intent.hasExtra(MyFridgeContract.BARCODE)){
-			barcode = intent.getStringExtra(MyFridgeContract.BARCODE);
+		if(intent.hasExtra(Fridge.BARCODE)){
+			barcode = intent.getStringExtra(Fridge.BARCODE);
 		}
 		
-		if(intent.hasExtra(MyFridgeContract.BARCODE_FORMAT)){
-			barcodeFormat = intent.getStringExtra(MyFridgeContract.BARCODE_FORMAT);
+		if(intent.hasExtra(Fridge.BARCODE_FORMAT)){
+			barcodeFormat = intent.getStringExtra(Fridge.BARCODE_FORMAT);
 		}
 	}
 	
 	public void onHomeClick(View v){
-
+		goingHome = true;
+		showDialog(DISCARD_DIALOG_ID);
 	}
 	
 	public void onRefreshClick(View v){
@@ -104,17 +107,26 @@ public class AddItemActivity extends Activity {
 			return;
 		}
 
-		String date = selectedYear + "/" + ( selectedMonth+1 ) + "/" + selectedDay;
 		long quantity = Long.parseLong(quantityString);
+
+		if(quantity < 1){
+			showDialog(QUANTITY_ERROR_DIALOG_ID);
+			return;
+		}
+		
+		String date = selectedYear + "/" + ( selectedMonth+1 ) + "/" + selectedDay;
 		
 		Uri fridgeUri = Fridge.buildNameUri(itemName);
 		Cursor fridgeCursor = managedQuery(fridgeUri, null, null, null, null);
+		
+		long originalQuantity = 0;
 		
 		while(fridgeCursor.moveToNext()){
 			String testDate = fridgeCursor.getString(fridgeCursor.getColumnIndex(Fridge.USE_BY_DATE));
 			if(testDate.equals(date)){
 				long itemId = fridgeCursor.getLong(fridgeCursor.getColumnIndex(Fridge._ID));
-				quantity += fridgeCursor.getLong(fridgeCursor.getColumnIndex(Fridge.QUANTITY));
+				originalQuantity = fridgeCursor.getLong(fridgeCursor.getColumnIndex(Fridge.QUANTITY));
+				quantity += originalQuantity;
 				fridgeUri = Fridge.buildItemUri(itemId);
 				update = true;
 				break;
@@ -142,7 +154,6 @@ public class AddItemActivity extends Activity {
 			contentResolver.insert(Fridge.CONTENT_URI_ITEMS, values);
 		}
 		
-		//TODO find a way to take into account the total numbers of items added historically
 		Uri historyUri = History.buildNameUri(itemName);
 		Cursor historyCursor = managedQuery(historyUri, null, null, null, null);
 		ContentValues historyValues = new ContentValues();
@@ -154,7 +165,7 @@ public class AddItemActivity extends Activity {
 			long itemId = historyCursor.getLong(historyCursor.getColumnIndex(History._ID));
 
 			timesAdded ++;
-			totalQuantity += quantity;
+			totalQuantity += quantity - originalQuantity;
 			
 			historyItemUri = History.buildItemUri(itemId);
 			historyValues.put(History.TIMES_ADDED, timesAdded);
@@ -223,6 +234,8 @@ public class AddItemActivity extends Activity {
 			return getDiscardDialog();
 		case USE_BY_DATE_WARNING_DIALOG_ID:
 			return getUseByDateWarningDialog();
+		case QUANTITY_ERROR_DIALOG_ID:
+			return getQuantityErrorDialog();
 		}
 		return null;
 	}
@@ -307,7 +320,11 @@ public class AddItemActivity extends Activity {
 		       .setCancelable(false)
 		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
-		        	   AddItemActivity.this.showDialog(ADD_MORE_DIALOG_ID);
+		        	   if(goingHome){
+		        		   Utils.goHome(AddItemActivity.this);
+		        	   }else{
+		        		   AddItemActivity.this.showDialog(ADD_MORE_DIALOG_ID);   
+		        	   }
 		           }
 		       })
 		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -322,6 +339,22 @@ public class AddItemActivity extends Activity {
 	private Dialog getUseByDateWarningDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		String message = getResources().getString(R.string.use_by_date_warning); 
+		String buttonText = getResources().getString(R.string.button_ok); 
+		
+		builder.setMessage(message)
+		       .setCancelable(false)
+		       .setNeutralButton(buttonText, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		
+		return builder.create();
+	}
+	
+	private Dialog getQuantityErrorDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String message = getResources().getString(R.string.quantity_error_warning); 
 		String buttonText = getResources().getString(R.string.button_ok); 
 		
 		builder.setMessage(message)

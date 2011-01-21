@@ -1,11 +1,9 @@
-package com.gnorsilva.android.myfridge.barcodes;
+package com.gnorsilva.android.myfridge.utils;
 
 import android.app.Activity;
 import android.content.Intent;
 
 import com.gnorsilva.android.myfridge.ui.WebSearchResultsActivity;
-import com.gnorsilva.android.myfridge.utils.ZXingIntentIntegrator;
-import com.gnorsilva.android.myfridge.utils.ZXingIntentResult;
 
 public class ZXingIntentResultHandler {
 
